@@ -66,6 +66,94 @@
 
 ---
 
+## 코드 리뷰
+
+### Autotest.java
+### 1. 🚀 주요 메서드 `run()`
+- 전체 테스트를 수행하는 메서드.
+- 소프트웨어 실행: `openSoftware()`
+- `iteration` 값에 따라 테스트 범위 결정:
+  - `iteration == 1 or 2`: `tab1` ~ `tab4` 테스트
+  - `iteration == 3`: `tab1` ~ `tab5` 테스트
+- 테스트 종료 후 PDF 리포트 생성: `ColumnDataTypesReport.build()`
+
+### 2. 🧪 탭별 테스트 메서드
+#### 📁 `tab1()` - Koala 이미지 유지 테스트
+- `koalaTab` 클릭 후 이미지 존재 여부 확인
+- 다른 탭으로 전환 후 다시 돌아왔을 때 이미지가 유지되는지 확인
+
+#### ✏️ `tab2()` - Text editor 테스트
+- 텍스트 입력 → 탭 전환 → 입력 텍스트 일치 여부 검사
+- HTML 에디터 요소 존재 여부 확인
+- 텍스트 서식 및 폰트 유지 여부 확인
+
+#### 📄 `tab3()` - Lorem Ipsum 텍스트 테스트
+- 고정된 Lorem Ipsum 텍스트 복사 후 비교
+- 우클릭 시 컨텍스트 메뉴가 표시되는지 확인
+
+#### 🎨 `tab4()` - Color picker UI 테스트
+- Color picker 접힘/펼침 기능 확인
+- 기본 색상이 흰색인지 확인
+
+#### ⏳ `tab5()` - 로딩 Progress 테스트
+- 무한 로딩 애니메이션이 화면에 나타나는지 확인
+
+### 3. 💻 `openSoftware()`메서드
+- `sikuli.openJavaJar(jarVersion)` 호출을 통해 Java JAR 파일 실행
+
+### 4. 📊 테스트 결과 리포트
+- 결과 기록 형식:  
+  `reportFile.add("PASSED"/"FAILED", "Tab 번호", "상세 메시지")`
+- 실행 종료 후 PDF로 출력:  
+  `Report{iteration}.pdf`
+---
+### SikuliSteps.java
+### 🔧 주요 필드 및 구성
+| 필드 | 설명 |
+|------|------|
+| `public Process p` | 실행 중인 자바 애플리케이션 프로세스를 추적하는 객체 |
+| `public Screen screen = new Screen();` | SikuliX의 화면 객체. UI 요소 탐지 및 조작에 사용 |
+
+### 주요 메서드 설명
+#### ✅ `boolean click(String pictureUrl)`
+- 지정한 이미지(`pictureUrl`)를 화면에서 찾아 클릭
+- 기본 유사도(similarity) 0.85 사용
+
+#### ✅ `boolean click(String pictureUrl, Double similarity)`
+- 주어진 유사도로 이미지 클릭 시도
+- 예외 발생 시 `false` 반환
+
+#### ✅ `boolean click(String pictureUrl, Double similarity, int retries)`
+- 이미지 클릭을 `retries` 횟수만큼 재시도 (1초 간격)
+- 실패 시 로그 출력
+
+#### 🔠 `boolean write(String pictureUrl, String text)`
+- `pictureUrl` 위치 클릭 → 더블 클릭 → `text` 입력
+- 입력 성공 여부 반환
+
+#### 📋 `boolean compareTextToClipboards(String textToCompare)`
+- 현재 포커스된 영역에서 `Ctrl+A`, `Ctrl+C` 실행 후 클립보드 내용과 `textToCompare` 비교
+- 동일하면 `true`, 다르면 `false`
+
+#### 🖱️ `boolean verifyIfExists(String pictureUrl)`
+- 이미지 존재 여부 확인 (`exists(...) != null`)
+
+#### 🔁 `boolean verifyIfExistsReTried(String pictureUrl, int retries)`
+- 지정한 `retries` 횟수만큼 반복적으로 이미지 존재 여부 확인
+
+#### 🖱️ `void rightClick()`
+- 현재 마우스 위치에서 우클릭 수행
+- 이후 모든 키 해제 (`keyUp()`)
+
+#### ⚙️ `void openJavaJar(int version)`
+- 지정된 버전의 `.jar` 파일 실행
+- 실행 후 5초 대기 → 실행 성공 여부를 로그로 출력
+
+#### ❌ `void exitJava()`
+- 실행 중인 자바 프로세스를 강제 종료
+
+---
+
 ## 테스트 결과
 
 테스트 결과는 아래와 같습니다.</br>
